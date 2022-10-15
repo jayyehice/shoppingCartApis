@@ -16,9 +16,7 @@ server.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html')
 })
 
-
-// 監聽 port
-// server.listen(port, () => console.log(`Listening on ${port}`))
+const ObjectID = require('mongodb').ObjectID;
 
 
 server.use(bodyParser.json());
@@ -30,32 +28,29 @@ const uri = ConnectionUri.uri();
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 
-
-
-
 client.connect((err, db) => {
 
     if (err) throw err;
     // 連線資料庫
     const dbo = db.db("shop")
 
-    //GET API  從 http://localhost:3000/comments 取得資料
+
+
+    // GET API
+    //從 http://localhost:3000/order 取得資料
     server.get('/products', (req, res) => {
-        // 回傳 comments 的所有資料	
+        // 回傳 order 的所有資料	
         dbo.collection('products').find().toArray((err, result) => {
             if (err) return console.log(err)
-        // 顯示取得資料在頁面上
+            // 顯示取得資料在頁面上
             res.send({ data: result })
         })
     })
 
 
 
-
-
-    
-    
-    // POST API 路徑為/comments expressjs 取參數的方法之一 req.body
+    // POST API
+    // 路徑為/order expressjs 取參數的方法之一 req.body
     server.post('/order', (req, res) => {
         // 顯示 clinet 端傳送過來的 JSON
         console.log(req.body);
@@ -65,22 +60,48 @@ client.connect((err, db) => {
             res.send(req.body);
         });
     })
-    
-    // modify server.listen(3000, () => {});
-    /* 將之前的監聽 server.listen(port, () => console.log(`Listening on ${port}`)) 註解掉，改寫至 MongoClient.connect() 裡 */
-    
-    MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
-        if (err) return console.log(err)
-        db = client.db('<dbName>')
-        server.listen(port, () => {
-            console.log('listening on 3000')
-        })
+
+
+
+    // DELETE API
+    server.delete('/order/:id', (req, res) => {
+        // use _id need use ObjectID(value)
+        const obj = { _id: ObjectID(req.params.id) };
+        // 顯示刪除 _id
+        console.log(obj)
+        if (!obj) {
+            res.sendStatus(403);
+        }
+        dbo.collection("order").deleteOne(obj, function (err, obj) {
+            if (err) throw err;
+            console.log("1 document deleted");
+            // 回傳訊息
+            res.send('delete success');
+        });
     })
 
+
+
+
+    server.put('/order/:id', (req, res) => {
+        // 顯示 id 及 修改內容
+        console.log(req.params.id, req.body);
+        if (!req.body) {
+            res.sendStatus(403);
+        }
+        const newvalues = { $set: req.body };
+        const obj = { _id: ObjectID(req.params.id) };
+        dbo.collection("order").updateOne(obj, newvalues, function (err, obj) {
+            if (err) throw err;
+            console.log("1 document update");
+            res.send('update success');
+        });
+    })
+
+
+    // 監聽
+    server.listen(port, () => {
+        console.log(`listening on ${port}`)
+    })
 });
-
-
-
-
-
 
