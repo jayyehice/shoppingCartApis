@@ -1,8 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const ConnectionUri = require('./ConnectionUri');
 
+//連線資訊
+const { DB_URL: uri } = require('./config.json');
 
 // 引用 express
 const server = express();
@@ -16,17 +17,14 @@ server.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html')
 })
 
-const ObjectID = require('mongodb').ObjectID;
-
 
 server.use(bodyParser.json());
 server.use(cors());
 
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = ConnectionUri.uri();
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-
+const ObjectID = require('mongodb').ObjectID;
 
 client.connect((err, db) => {
 

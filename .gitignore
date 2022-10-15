@@ -2,4 +2,4 @@
 
 # dependencies
 /node_modules
-/ConnectionUri.js
+/config.json
