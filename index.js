@@ -3,7 +3,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 //連線資訊
-const { DB_URL: uri } = require('./config.json');
+// const { DB_URL: uri } = require('./config.json');
+const uri = process.env.DB_URL;
 
 // 引用 express
 const server = express();
