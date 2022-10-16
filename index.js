@@ -36,10 +36,18 @@ client.connect((err, db) => {
 
 
     // GET API
-    //從 http://localhost:3000/order 取得資料
     server.get('/products', (req, res) => {
         // 回傳 order 的所有資料	
         dbo.collection('products').find().toArray((err, result) => {
+            if (err) return console.log(err)
+            // 顯示取得資料在頁面上
+            res.send({ data: result })
+        })
+    })
+
+    server.get('/order', (req, res) => {
+        // 回傳 order 的所有資料	
+        dbo.collection('order').find().toArray((err, result) => {
             if (err) return console.log(err)
             // 顯示取得資料在頁面上
             res.send({ data: result })
@@ -64,7 +72,6 @@ client.connect((err, db) => {
 
     // DELETE API
     server.delete('/order/:id', (req, res) => {
-        // use _id need use ObjectID(value)
         const obj = { _id: ObjectID(req.params.id) };
         // 顯示刪除 _id
         console.log(obj)
