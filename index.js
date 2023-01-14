@@ -2,10 +2,17 @@ const fs = require('fs')
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+var multer  = require('multer');
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads')
+    },
+    filename: function (req, file, cb) {
+      cb(null, Date.now() + '.webm')
+    }
+});
+const upload = multer({storage: storage})
 
-//連線資訊
-// const { DB_URL: uri } = require('./config.json');
-const uri = process.env.DB_URL;
 
 // 引用 express
 const server = express();
@@ -13,22 +20,19 @@ const server = express();
 // 預設 port
 const port = process.env.PORT || 3000
 
+server.use(express.static('public'));
+server.use('/uploads',express.static('/uploads'));
 server.use(bodyParser.json());
 server.use(cors());
 
+server.get('/', (req, res, next) => {
+    return res.render("./public/index.html");
+});
 
-var multer  = require('multer');
-
-var upload = multer({dest: "public/uploads"})
-
-server.post('/upload', upload.single('MyFile'), function (req, res, next) {
-    var file = req.file;
-    // combine file
-    let formData = req.body.fileUpload;
-
+server.post('/upload', upload.single('content'),function (req, res, next){
     const str_success = '{"success": true, "data":{}}';
-    var resobj = JSON.parse(str_success);        
-    res.status(200).send(resobj);  
+    var resobj = JSON.parse(str_success);
+    res.status(200).send(resobj);
 });
 
 

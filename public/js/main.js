@@ -143,10 +143,24 @@ function mediaRecorderSetup() {
 
         var formData = new FormData();
         formData.append("content", blob);
-        fetch("http://localhost:3000/upload", { method: 'POST', body: formData })
-          .then((res) => console.log(res))
 
+        console.log(outputVideoURL)
+        // fetch("http://localhost:3000/upload", { method: 'POST', body: {data: blob} })
+        //   .then((res) => console.log(res))
 
+        const apiUrl = "http://localhost:3000/upload";
+
+        fetch(apiUrl, {
+          method: 'POST',
+          body: formData,
+          mode: 'no-cors'
+        })
+          .then((response) => {
+            console.log(response);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
 
 
         // 停止所有的輸入或輸出的串流裝置（例如，關攝影機）
