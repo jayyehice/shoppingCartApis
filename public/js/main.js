@@ -136,18 +136,9 @@ function mediaRecorderSetup() {
         chunks = []
         outputVideoURL = URL.createObjectURL(blob)
         outputVideo.src = outputVideoURL
-
         // saveData(outputVideoURL)
-
-        // console.log(outputVideoURL);
-
         var formData = new FormData();
         formData.append("content", blob);
-
-        console.log(outputVideoURL)
-        // fetch("http://localhost:3000/upload", { method: 'POST', body: {data: blob} })
-        //   .then((res) => console.log(res))
-
         const apiUrl = "http://localhost:3000/upload";
 
         fetch(apiUrl, {
